@@ -11,21 +11,17 @@ class S8btech:
     url = 'http://projects.mgu.ac.in/bTech/btechresult/index.php?' \
           'module=public&attrib=result&page=result&exam=37&Submit2=Submit&prn='
     start, end, filename = 0, 0, "result.csv"
-    # subjects = {
-    #     "COMPUTER SCIENCE AND ENGINEERING": [
-    #         "High Performance Computing",
-    #         "Artificial Intelligence",
-    #         "Security in Computing",
-    #         "Mobile Computing",
-    #         "Security in Computing",
-    #         "Computer Graphics Lab",
-    #         "Project",
-    #         "Viva Voce"
-    #     ]
-    # }
+
 
     def __init__(self):
-        pass
+        try:
+            os.mkdir("pdf")
+        except:
+            pass
+        try:
+            os.mkdir("tmp")
+        except:
+            pass
 
     def get(self, start=0, end=0, filename="result.csv"):
         self.start = start
@@ -65,9 +61,6 @@ class S8btech:
                 elif re.match("[\-0-9]+ [\-0-9]+", span.text):
                     ind = f2.index(span)
                     mks.append((span.text + " " + f2[ind+1].text).split(" "))
-
-            # for sub in subs:
-            #     marks[sub] = mks[subs.index(sub)]
 
             gpa.append(re.findall("SGPA : ([\-0-9\.]+)", bs.text)[0])
             gpa.append(re.findall("CGPA : ([\-0-9\.]+)", bs.text)[0])
