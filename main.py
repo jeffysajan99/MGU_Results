@@ -10,7 +10,7 @@ class S8btech:
 
     url = 'http://projects.mgu.ac.in/bTech/btechresult/index.php?' \
           'module=public&attrib=result&page=result&exam=37&Submit2=Submit&prn='
-    start, end = 0, 0
+    start, end, filename = 0, 0, "result.csv"
     # subjects = {
     #     "COMPUTER SCIENCE AND ENGINEERING": [
     #         "High Performance Computing",
@@ -27,9 +27,10 @@ class S8btech:
     def __init__(self):
         pass
 
-    def get(self, start=0, end=0):
+    def get(self, start=0, end=0, filename="result.csv"):
         self.start = start
         self.end = end
+        self.filename = filename
 
         for prn in range(self.start, self.end+1):
             url = self.url + str(prn)
@@ -41,7 +42,7 @@ class S8btech:
     def pdfToHTML(self, prn):
         subs, mks = [], []
         name, reg, colg, branch, marks, gpa = "", "", "", "", {}, []
-        p = subprocess.Popen("pdftohtml pdf/" + str(prn) + ".pdf tmp/" + str(prn), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen("convert pdf/" + str(prn) + ".pdf tmp/" + str(prn), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.wait()
         if os.path.exists("tmp/" + str(prn)):
             bs = BeautifulSoup(open("tmp/" + str(prn) + "/page1.html", "r").read())
@@ -73,17 +74,17 @@ class S8btech:
 
             self.exportResults(name, reg, colg, branch, mks, gpa)
         else:
-            l = open("finished.csv", "a")
+            l = open(self.filename.split(".")[0] + "_finished.csv", "a")
             l.write("Err, " + str(prn) + "\n")
             l.close()
             print "Err, " + str(prn)
 
 
     def exportResults(self, name, reg, colg, branch, marks, gpa):
-        if os.path.exists("results.csv"):
-            f = open("results.csv", "a")
+        if os.path.exists(self.filename):
+            f = open(self.filename, "a")
         else:
-            f = open("results.csv", "w")
+            f = open(self.filename, "w")
             f.write("RegNum, Name, College, Branch, "
                     "Marks 1 Int, Marks 1 Ext, Marks 1 Tot, "
                     "Marks 2 Int, Marks 2 Ext, Marks 2 Tot, "
@@ -98,7 +99,7 @@ class S8btech:
         data = [reg, name, colg, branch, mk, gpa[0], gpa[1]]
         f.write(", ".join(data) + "\n")
         f.close()
-        l = open("finished.csv", "a")
+        l = open(self.filename.split(".")[0] + "_finished.csv", "a")
         l.write(reg + ", " + name + "\n")
         l.close()
         print reg, name
@@ -107,7 +108,8 @@ class S8btech:
 if __name__ == '__main__':
     start = input("Starting Reg Number: ")
     end = input("Ending Reg Number: ")
-    S8btech().get(start, end)
+    filename = raw_input("Enter filename: ")
+    S8btech().get(start, end, filename+".csv")
 
 
 
