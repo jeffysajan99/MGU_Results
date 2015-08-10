@@ -65,7 +65,7 @@ class S8btech:
             gpa.append(re.findall("SGPA : ([\-0-9\.]+)", bs.text)[0])
             gpa.append(re.findall("CGPA : ([\-0-9\.]+)", bs.text)[0])
 
-            self.exportResults(name, reg, colg, branch, mks, gpa)
+            self.exportResults(name, reg, colg, branch, subs, mks, gpa)
         else:
             l = open(self.filename.split(".")[0] + "_finished.csv", "a")
             l.write("Err, " + str(prn) + "\n")
@@ -73,21 +73,23 @@ class S8btech:
             print "Err, " + str(prn)
 
 
-    def exportResults(self, name, reg, colg, branch, marks, gpa):
+    def exportResults(self, name, reg, colg, branch, subs, marks, gpa):
         if os.path.exists(self.filename):
             f = open(self.filename, "a")
         else:
             f = open(self.filename, "w")
             f.write("RegNum, Name, College, Branch, "
-                    "Marks 1 Int, Marks 1 Ext, Marks 1 Tot, "
-                    "Marks 2 Int, Marks 2 Ext, Marks 2 Tot, "
-                    "Marks 3 Int, Marks 3 Ext, Marks 3 Tot, "
-                    "Elective 1 Int, Elective 1 Ext, Elective 1 Tot, "
-                    "Elective 2 Int, Elective 2 Ext, Elective 2 Tot, "
-                    "Lab Int, Lab Ext, Lab Tot, "
+                    "Subject, Marks 1 Int, Marks 1 Ext, Marks 1 Tot, "
+                    "Subject, Marks 2 Int, Marks 2 Ext, Marks 2 Tot, "
+                    "Subject, Marks 3 Int, Marks 3 Ext, Marks 3 Tot, "
+                    "Subject, Elective 1 Int, Elective 1 Ext, Elective 1 Tot, "
+                    "Subject, Elective 2 Int, Elective 2 Ext, Elective 2 Tot, "
+                    "Subject, Lab Int, Lab Ext, Lab Tot, "
                     "Project Int, Project Ext, Project Tot, "
                     "Viva Voce Int, Viva Voce Ext, Viva Voce Tot, "
                     "SGPA, CGPA\n")
+        for s in range(6):
+            marks[s].insert(0, subs[s])
         mk = ", ".join([", ".join(i) for i in marks])
         data = [reg, name, colg, branch, mk, gpa[0], gpa[1]]
         f.write(", ".join(data) + "\n")
